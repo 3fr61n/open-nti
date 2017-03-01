@@ -27,15 +27,32 @@ input-syslog:
    - /etc/localtime:/etc/localtime
   links:
    - opennti
-   
-input-snmp:
-#  image: $INPUT_SNMP_IMAGE_NAME:$IMAGE_TAG
-  build: $INPUT_SNMP_DIR
-  container_name: $INPUT_SNMP_CONTAINER_NAME
+
+input-xflow:
+  image: $INPUT_XFLOW_IMAGE_NAME:$IMAGE_TAG
+  container_name: $INPUT_XFLOW_CONTAINER_NAME
+  environment:
+    - "INFLUXDB_ADDR=opennti"
+    - "OUTPUT_INFLUXDB=true"
+    - "BGP_LOG=true"
+  ports:
+    - "$LOCAL_PORT_NETFLOW:2056/udp"
+    - "$LOCAL_PORT_SFLOW:6343/udp"
+    - "$LOCAL_PORT_IPFIX:4739/udp"
+    - "$LOCAL_PORT_BGP:179"
   volumes:
     - /etc/localtime:/etc/localtime:ro
   links:
     - opennti
+
+input-snmp:
+#   image: $INPUT_SNMP_IMAGE_NAME:$IMAGE_TAG
+    build: $INPUT_SNMP_DIR
+    container_name: $INPUT_SNMP_CONTAINER_NAME
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    links:
+      - opennti
 
 input-internal:
   image: $INPUT_INTERNAL_IMAGE_NAME:$IMAGE_TAG

@@ -1,69 +1,146 @@
+version: '2'
+services:
+  consul:
+    image: consul
+    container_name: consul
+    command: agent -server -bootstrap-expect=1 -node=open_nti -ui
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      CONSUL_LOCAL_CONFIG: '{"skip_leave_on_interrupt": true}'
+      CONSUL_BIND_INTERFACE: eth0
+      CONSUL_CLIENT_INTERFACE: eth0
+      SERVICE_53_IGNORE: 'yes'
+      SERVICE_8300_IGNORE: 'yes'
+      SERVICE_8301_IGNORE: 'yes'
+      SERVICE_8302_IGNORE: 'yes'
+      SERVICE_8400_IGNORE: 'yes'
+      SERVICE_8500_NAME: 'consul-admin_infra'
+    ports:
+      - "8500:8500"
 
-input-jti:
-  image: $INPUT_JTI_IMAGE_NAME:$IMAGE_TAG
-  container_name: $INPUT_JTI_CONTAINER_NAME
-  environment:
-   - "INFLUXDB_ADDR=opennti"
-   - "OUTPUT_INFLUXDB=true"
-   - "OUTPUT_STDOUT=false"
-  ports:
-   - "$LOCAL_PORT_JTI:50000/udp"
-   - "$LOCAL_PORT_ANALYTICSD:50020/udp"
-  volumes:
-   - /etc/localtime:/etc/localtime
-  links:
-   - opennti
+# Exactly one per physical node
+  # registrator:
+  #   command: "-internal consul://consul:8500"
+  #   image: gliderlabs/registrator:latest
+  #   container_name: registrator
+  #   links:
+  #     - "consul"
+  #   volumes:
+  #     - "/var/run/docker.sock:/tmp/docker.sock"
 
-input-syslog:
-  image: $INPUT_SYSLOG_IMAGE_NAME:$IMAGE_TAG
-  container_name: $INPUT_SYSLOG_CONTAINER_NAME
-  environment:
-   - "INFLUXDB_ADDR=opennti"
-   - "OUTPUT_INFLUXDB=true"
-   - "OUTPUT_STDOUT=false"
-  ports:
-   - "$LOCAL_PORT_EVENT:6000/udp"
-  volumes:
-   - /etc/localtime:/etc/localtime
-  links:
-   - opennti
+#  input-jti:
+#    image: $INPUT_JTI_IMAGE_NAME:$IMAGE_TAG
+#    container_name: $INPUT_JTI_CONTAINER_NAME
+#    environment:
+#      - "INFLUXDB_ADDR=opennti"
+#      - "OUTPUT_INFLUXDB=true"
+#      - "OUTPUT_STDOUT=false"
+#    ports:
+#      - "$LOCAL_PORT_JTI:50000/udp"
+#      - "$LOCAL_PORT_ANALYTICSD:50020/udp"
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#    links:
+#      - opennti
+#      - consul
 
-input-snmp:
-#  image: $INPUT_SNMP_IMAGE_NAME:$IMAGE_TAG
-  build: $INPUT_SNMP_DIR
-  container_name: $INPUT_SNMP_CONTAINER_NAME
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-  links:
-    - opennti
+#  input-syslog:
+#    image: $INPUT_SYSLOG_IMAGE_NAME:$IMAGE_TAG
+#    container_name: $INPUT_SYSLOG_CONTAINER_NAME
+#    environment:
+#      - "INFLUXDB_ADDR=opennti"
+#      - "OUTPUT_INFLUXDB=true"
+#      - "OUTPUT_STDOUT=false"
+#    ports:
+#      - "$LOCAL_PORT_EVENT:6000/udp"
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#    links:
+#      - opennti
+#      - consul
 
-input-internal:
-#  image: $INPUT_INTERNAL_IMAGE_NAME:$IMAGE_TAG
-  build: $INPUT_INTERNAL_DIR
-  container_name: $INPUT_INTERNAL_CONTAINER_NAME
-  environment:
-    - "HOST_PROC=/rootfs/proc"
-    - "HOST_SYS=/rootfs/sys"
-    - "HOST_ETC=/rootfs/etc"
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - /var/run/docker.sock:/var/run/docker.sock:ro
-    - /sys:/rootfs/sys:ro
-    - /proc:/rootfs/proc:ro
-    - /etc:/rootfs/etc:ro
-  links:
-    - opennti
 
-opennti:
-  image: $MAIN_IMAGE_NAME:$IMAGE_TAG
-  container_name: $MAIN_CONTAINER_NAME
-  volumes:
-   - ./$LOCAL_DIR_DASHBOARD:/src/dashboards
-   - ./$LOCAL_DIR_DATA:/opt/open-nti/data
-   - /etc/localtime:/etc/localtime
-  ports:
-   - "$LOCAL_PORT_STATSD:8125/udp"
-   - "$LOCAL_PORT_NGINX:80"
-   - "$LOCAL_PORT_GRAFANA:3000"
-   - "$LOCAL_PORT_INFLUXDB:8083"
-   - "$LOCAL_PORT_INFLUXDB_API:8086"
+  input-netconf:
+    image: $INPUT_NETCONF_IMAGE_NAME:$IMAGE_TAG
+    container_name: $INPUT_NETCONF_CONTAINER_NAME
+    # environment:
+    #   - SERVICE_NAME=input-netconf
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      # - ./plugins/input-netconf/:/data
+      # - ../py-netconf-collector:/source/py-netconf-collector
+    links:
+      - opennti
+      - consul
+
+#  input-oc:
+#    image: $INPUT_OC_IMAGE_NAME:$IMAGE_TAG
+#    container_name: $INPUT_OC_CONTAINER_NAME
+#    # environment:
+#    #   - SERVICE_NAME=input-netconf
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#    links:
+#      - opennti
+#      - consul
+
+  input-xflow:
+    image: $INPUT_XFLOW_IMAGE_NAME:$IMAGE_TAG
+    container_name: $INPUT_XFLOW_CONTAINER_NAME
+    environment:
+      - "INFLUXDB_ADDR=opennti"
+      - "OUTPUT_INFLUXDB=true"
+      - "BGP_LOG=true"
+    ports:
+      - "$LOCAL_PORT_NETFLOW:2056/udp"
+      - "$LOCAL_PORT_SFLOW:6343/udp"
+      - "$LOCAL_PORT_IPFIX:4739/udp"
+      - "$LOCAL_PORT_BGP:179"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    links:
+      - opennti
+      - consul
+
+  input-snmp:
+#   image: $INPUT_SNMP_IMAGE_NAME:$IMAGE_TAG
+    build: $INPUT_SNMP_DIR
+    container_name: $INPUT_SNMP_CONTAINER_NAME
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    links:
+      - opennti
+
+  input-internal:
+    image: $INPUT_INTERNAL_IMAGE_NAME:$IMAGE_TAG
+    container_name: $INPUT_INTERNAL_CONTAINER_NAME
+    environment:
+      - "HOST_PROC=/rootfs/proc"
+      - "HOST_SYS=/rootfs/sys"
+      - "HOST_ETC=/rootfs/etc"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+      - /etc:/rootfs/etc:ro
+    links:
+      - opennti
+      - consul
+
+  opennti:
+    image: $MAIN_IMAGE_NAME:$IMAGE_TAG
+    container_name: $MAIN_CONTAINER_NAME
+    volumes:
+      - ./$LOCAL_DIR_DASHBOARD:/src/dashboards
+      - ./$LOCAL_DIR_DATA:/opt/open-nti/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "$LOCAL_PORT_STATSD:8125/udp"
+      - "$LOCAL_PORT_NGINX:80"
+      - "$LOCAL_PORT_GRAFANA:3000"
+      - "$LOCAL_PORT_INFLUXDB:8083"
+      - "$LOCAL_PORT_INFLUXDB_API:8086"
+    links:
+      - consul

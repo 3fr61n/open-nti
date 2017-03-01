@@ -1,0 +1,62 @@
+!
+! pmacctd configuration example
+!
+! Did you know CONFIG-KEYS contains the detailed list of all configuration keys
+! supported by 'nfacctd' and 'pmacctd' ?
+!
+nfacctd_port: 2056
+daemonize: false
+
+plugins: memory
+
+! Agregation for more detailed information
+aggregate: src_std_comm,src_host,dst_host,src_port,dst_port,timestamp_start,timestamp_end, peer_src_ip, peer_dst_ip, in_iface, out_iface, proto, tos, src_mask, dst_mask, src_net, dst_net, src_as, dst_as, tcpflags
+
+! Agregation for strict (peer_ip_src/peer_ip_dst) traffic matrix 
+!aggregate: peer_src_ip, peer_dst_ip
+
+!print_refresh_time: 60
+!print_history: 300
+!print_history_roundoff: m
+!print_output: json
+!print_output_file: /var/log/pmacctd/pmacctd-samples.txt
+!print_output_file_append: true
+!plugin_pipe_size: 10240000
+!plugin_buffer_size: 10240
+
+bgp_daemon: true
+bgp_daemon_ip: 0.0.0.0
+bgp_daemon_max_peers: 100
+bgp_aspath_radius: 3
+bgp_agent_map: /data/templates/agent_to_peer.map
+!bgp_daemon_msglog: true 
+bgp_table_dump_file: /var/log/bgp-dump-file.txt
+bgp_table_dump_refresh_time: 60
+bgp_peer_src_as_type: bgp
+bgp_follow_nexthop: 0.0.0.0/0
+bgp_follow_nexthop_external: true
+nfacctd_as: bgp
+nfacctd_net: bgp
+
+! NOTES:
+
+! Auxiliary files
+
+!cat /data/templates/agent_to_peer.map  (default, one RIB per PE)
+!bgp_ip=1.1.1.1    ip=1.1.1.1
+!bgp_ip=2.2.2.2    ip=2.2.2.2
+
+!cat /data/templates/agent_to_peer.map  (if both PEs have same RIB )
+!bgp_ip=1.1.1.1      ip=1.1.1.1
+!bgp_ip=1.1.1.1      ip=2.2.2.2
+
+!Influxdb quieries
+
+!IPv4 traffic matrix (peer_ip_src/peer_ip_dst) from latest 10m
+!select sum(*) from netflow where time > now() - 10m group by peer_ip_src,peer_ip_dst
+
+!IPv4 traffic matrix (peer_ip_src/peer_ip_dst) between a time range
+!select sum(*) from netflow where time > '2017-02-20 16:32:01' and time < '2017-02-20 16:46:01' group by peer_ip_src,peer_ip_dst
+
+
+
