@@ -20,9 +20,17 @@ export INPUT_OC_DIR=plugins/input-oc
 export INPUT_OC_IMAGE_NAME=juniper/open-nti-input-oc
 export INPUT_OC_CONTAINER_NAME=opennti_input_oc
 
+export INPUT_XFLOW_DIR=plugins/input-xflow
+export INPUT_XFLOW_IMAGE_NAME=juniper/open-nti-input-xflow
+export INPUT_XFLOW_CONTAINER_NAME=opennti_input_xflow
+
 export INPUT_SNMP_DIR=plugins/input-snmp
 export INPUT_SNMP_IMAGE_NAME=juniper/open-nti-input-snmp
 export INPUT_SNMP_CONTAINER_NAME=opennti_input_snmp
+
+export INPUT_STATSD_DIR=plugins/input-statsd
+export INPUT_STATSD_IMAGE_NAME=juniper/open-nti-input-statsd
+export INPUT_STATSD_CONTAINER_NAME=opennti_input_statsd
 
 export INPUT_INTERNAL_DIR=plugins/input-internal
 export INPUT_INTERNAL_IMAGE_NAME=juniper/open-nti-input-internal
@@ -38,11 +46,16 @@ export DOCKER_COMPOSE_FILE=docker-compose.yml
 
 ## Local ports that will be redirected to the Open NTI
 ## Startup will fail if some ports are already in use
+
 export LOCAL_PORT_JTI=50000
 export LOCAL_PORT_NA=50010
 export LOCAL_PORT_ANALYTICSD=50020
 export LOCAL_PORT_STATSD=8125
 export LOCAL_PORT_EVENT=6000
+export LOCAL_PORT_NETFLOW=2056
+export LOCAL_PORT_SFLOW=6343
+export LOCAL_PORT_IPFIX=4739
+export LOCAL_PORT_BGP=179
 export LOCAL_PORT_GRAFANA=3000
 export LOCAL_PORT_INFLUXDB=8083
 export LOCAL_PORT_INFLUXDB_API=8086

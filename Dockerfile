@@ -19,7 +19,6 @@ RUN     /usr/sbin/enable_insecure_key
 # Latest version
 ENV GRAFANA_VERSION 4.1.2-1486989747
 ENV INFLUXDB_VERSION 1.2.0
-ENV TELEGRAF_VERSION 1.2.1
 
 RUN     apt-get -y update && \
         apt-get -y install \
@@ -83,19 +82,6 @@ RUN     mkdir /etc/service/influxdb
 ADD     docker/influxdb/influxdb.launcher.sh /etc/service/influxdb/run
 
 ########################
-### Install telegraf ###
-########################
-
-RUN     curl -s -o /tmp/telegraf_latest_amd64.deb https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}_amd64.deb && \
-        dpkg -i /tmp/telegraf_latest_amd64.deb && \
-        rm /tmp/telegraf_latest_amd64.deb
-
-ADD     docker/telegraf/telegraf.conf /etc/telegraf/telegraf.conf
-
-RUN     mkdir /etc/service/telegraf
-ADD     docker/telegraf/telegraf.launcher.sh /etc/service/telegraf/run
-
-########################
 ### Configuration    ###
 ########################
 
@@ -127,7 +113,6 @@ RUN     chmod +x /etc/service/nginx/run         &&\
         chmod +x /etc/service/grafana/run       &&\
         chmod +x /etc/my_init.d/grafana.init.sh &&\
         chmod +x /etc/service/influxdb/run      &&\
-        chmod +x /etc/service/telegraf/run      &&\
         chmod +x /influxdbrun.sh
 
 WORKDIR /

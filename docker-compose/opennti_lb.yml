@@ -53,6 +53,17 @@ input-snmp:
     links:
       - opennti
 
+input-statsd:
+#   image: $INPUT_STATSD_IMAGE_NAME:$IMAGE_TAG
+    build: $INPUT_STATSD_DIR
+    container_name: $INPUT_STATSD_CONTAINER_NAME
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "$LOCAL_PORT_STATSD:8125/udp"
+    links:
+      - opennti
+
 input-internal:
   image: $INPUT_INTERNAL_IMAGE_NAME:$IMAGE_TAG
   container_name: $INPUT_INTERNAL_CONTAINER_NAME
@@ -81,7 +92,6 @@ opennti:
    - ../$LOCAL_DIR_DATA:/opt/open-nti/data
    - /etc/localtime:/etc/localtime
   ports:
-   - "$LOCAL_PORT_STATSD:8125/udp"
    - "$LOCAL_PORT_NGINX:80"
    - "$LOCAL_PORT_GRAFANA:3000"
    - "$LOCAL_PORT_INFLUXDB:8083"
