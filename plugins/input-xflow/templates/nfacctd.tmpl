@@ -4,8 +4,9 @@
 ! Did you know CONFIG-KEYS contains the detailed list of all configuration keys
 ! supported by 'nfacctd' and 'pmacctd' ?
 !
-nfacctd_port: 2056
-daemonize: false
+nfacctd_port: 2056  
+pidfile: /var/log/nfacctd.pid
+daemonize: true 
 
 plugins: memory
 

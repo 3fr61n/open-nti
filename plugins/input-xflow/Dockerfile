@@ -11,7 +11,7 @@ RUN     apt-get -y update && \
 # dependencies
 RUN     apt-get -y update && \
         apt-get -y install \
-        git adduser libfontconfig wget make curl tcpdump pmacct unzip vim inetutils-ping dnsutils && \
+        git adduser libfontconfig wget make curl tcpdump pmacct unzip vim supervisor inetutils-ping dnsutils && \
         apt-get clean   &&\
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -26,12 +26,11 @@ RUN     curl -s -o /tmp/telegraf_latest_amd64.deb https://dl.influxdata.com/tele
         mkdir -p /opt/telegraf/config/ && \
         rm /tmp/telegraf_latest_amd64.deb
 
-COPY start-input-xflow.sh /source/start-input-xflow.sh
-
-RUN chmod +x /source/start-input-xflow.sh
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN mkdir /data
 ADD templates /data/templates/
+RUN chmod +x /data/templates/start-input-xflow.sh
 WORKDIR /data
 
-CMD ["/source/start-input-xflow.sh"]
+CMD ["/usr/bin/supervisord"]
