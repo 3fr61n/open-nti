@@ -11,7 +11,7 @@ RUN     apt-get -y update && \
 # dependencies
 RUN     apt-get -y update && \
         apt-get -y install \
-        git adduser libfontconfig wget make curl tcpdump pmacct unzip vim && \
+        git adduser libfontconfig wget make curl tcpdump pmacct unzip vim inetutils-ping dnsutils && \
         apt-get clean   &&\
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

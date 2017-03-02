@@ -24,7 +24,7 @@ include $(VAR_FILE)
 # Define run options for Docker-compose
 RUN_OPTIONS = IMAGE_TAG=$(IMAGE_TAG)
 
-build: build-main build-jti build-syslog build-netconf build-oc build-xflow build-snmp build-statsd build-internal build-lb
+build: build-main build-jti build-syslog build-xflow build-snmp build-statsd build-internal
 
 build-main:
 	@echo "======================================================================"
@@ -44,17 +44,11 @@ build-syslog:
 	@echo "======================================================================"
 	docker build -f $(INPUT_SYSLOG_DIR)/Dockerfile -t $(INPUT_SYSLOG_IMAGE_NAME):$(IMAGE_TAG) $(INPUT_SYSLOG_DIR)
 
-build-netconf:
-	@echo "======================================================================"
-	@echo "Build Docker image - $(INPUT_NETCONF_IMAGE_NAME):$(IMAGE_TAG)"
-	@echo "======================================================================"
-	docker build -f $(INPUT_NETCONF_DIR)/Dockerfile -t $(INPUT_NETCONF_IMAGE_NAME):$(IMAGE_TAG) $(INPUT_NETCONF_DIR)
-
-build-oc:
-	@echo "======================================================================"
-	@echo "Build Docker image - $(INPUT_OC_IMAGE_NAME):$(IMAGE_TAG)"
-	@echo "======================================================================"
-	docker build -f $(INPUT_OC_DIR)/Dockerfile -t $(INPUT_OC_IMAGE_NAME):$(IMAGE_TAG) $(INPUT_OC_DIR)
+#build-oc:
+#	@echo "======================================================================"
+#	@echo "Build Docker image - $(INPUT_OC_IMAGE_NAME):$(IMAGE_TAG)"
+#	@echo "======================================================================"
+#	docker build -f $(INPUT_OC_DIR)/Dockerfile -t $(INPUT_OC_IMAGE_NAME):$(IMAGE_TAG) $(INPUT_OC_DIR)
 
 build-xflow:
 	@echo "======================================================================"
@@ -80,11 +74,11 @@ build-internal:
 	@echo "======================================================================"
 	docker build -f $(INPUT_INTERNAL_DIR)/Dockerfile -t $(INPUT_INTERNAL_IMAGE_NAME):$(IMAGE_TAG) $(INPUT_INTERNAL_DIR)
 
-build-lb:
-	@echo "======================================================================"
-	@echo "Build Docker image - $(LB_UDP_IMAGE_NAME):$(IMAGE_TAG)"
-	@echo "======================================================================"
-	docker build -f $(LB_UDP_DIR)/Dockerfile -t $(LB_UDP_IMAGE_NAME):$(IMAGE_TAG) $(LB_UDP_DIR)
+#build-lb:
+#	@echo "======================================================================"
+#	@echo "Build Docker image - $(LB_UDP_IMAGE_NAME):$(IMAGE_TAG)"
+#	@echo "======================================================================"
+#	docker build -f $(LB_UDP_DIR)/Dockerfile -t $(LB_UDP_IMAGE_NAME):$(IMAGE_TAG) $(LB_UDP_DIR)
 
 
 
@@ -94,12 +88,12 @@ test-build:
 	docker build -t $(MAIN_IMAGE_NAME):$(TEST_TAG) .
 	docker build -f $(INPUT_JTI_DIR)/Dockerfile -t $(INPUT_JTI_IMAGE_NAME):$(TEST_TAG) $(INPUT_JTI_DIR)
 	docker build -f $(INPUT_SYSLOG_DIR)/Dockerfile -t $(INPUT_SYSLOG_IMAGE_NAME):$(TEST_TAG) $(INPUT_SYSLOG_DIR)
-	docker build -f $(INPUT_OC_DIR)/Dockerfile -t $(INPUT_OC_IMAGE_NAME):$(TEST_TAG) $(INPUT_OC_DIR)
+#	docker build -f $(INPUT_OC_DIR)/Dockerfile -t $(INPUT_OC_IMAGE_NAME):$(TEST_TAG) $(INPUT_OC_DIR)
 	docker build -f $(INPUT_XFLOW_DIR)/Dockerfile -t $(INPUT_XFLOW_IMAGE_NAME):$(TEST_TAG) $(INPUT_XFLOW_DIR)
 	docker build -f $(INPUT_SNMP_DIR)/Dockerfile -t $(INPUT_SNMP_IMAGE_NAME):$(TEST_TAG) $(INPUT_SNMP_DIR)
 	docker build -f $(INPUT_STATSD_DIR)/Dockerfile -t $(INPUT_STATSD_IMAGE_NAME):$(TEST_TAG) $(INPUT_STATSD_DIR)
 	docker build -f $(INPUT_INTERNAL_DIR)/Dockerfile -t $(INPUT_INTERNAL_IMAGE_NAME):$(TEST_TAG) $(INPUT_INTERNAL_DIR)
-	docker build -f $(LB_UDP_DIR)/Dockerfile -t $(LB_UDP_IMAGE_NAME):$(TEST_TAG) $(LB_UDP_DIR)
+#	docker build -f $(LB_UDP_DIR)/Dockerfile -t $(LB_UDP_IMAGE_NAME):$(TEST_TAG) $(LB_UDP_DIR)
 
 test-run:
 	python -m pytest -v -x
@@ -130,12 +124,12 @@ update:
 	docker pull $(MAIN_IMAGE_NAME):latest
 	docker pull $(INPUT_JTI_IMAGE_NAME):latest
 	docker pull $(INPUT_SYSLOG_IMAGE_NAME):latest
-	docker pull $(INPUT_OC_IMAGE_NAME):latest
+#	docker pull $(INPUT_OC_IMAGE_NAME):latest
 	docker pull $(INPUT_XFLOW_IMAGE_NAME):latest
 	docker pull $(INPUT_SNMP_IMAGE_NAME):latest
 	docker pull $(INPUT_STATSD_IMAGE_NAME):latest
 	docker pull $(INPUT_INTERNAL_IMAGE_NAME):latest
-	docker pull $(LB_UDP_IMAGE_NAME):latest
+#	docker pull $(LB_UDP_IMAGE_NAME):latest
 
 scale-input-syslog:
 	$(RUN_OPTIONS) docker-compose -f $(DOCKER_FILE) scale input-syslog=$(NBR)
@@ -143,11 +137,11 @@ scale-input-syslog:
 scale-input-jti:
 	$(RUN_OPTIONS) docker-compose -f $(DOCKER_FILE) scale input-jti=$(NBR)
 
-show-conf-lb:
-	docker exec -it $(LB_UDP_CONTAINER_NAME) cat /etc/nginx/nginx.conf
+#show-conf-lb:
+#	docker exec -it $(LB_UDP_CONTAINER_NAME) cat /etc/nginx/nginx.conf
 
-show-conf-oc:
-	docker exec -it $(INPUT_OC_CONTAINER_NAME) cat /opt/telegraf/config/telegraf.conf
+#show-conf-oc:
+#	docker exec -it $(INPUT_OC_CONTAINER_NAME) cat /opt/telegraf/config/telegraf.conf
 
 cron-show:
 	# if [ $(TAG) == "all" ]; then

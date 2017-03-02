@@ -21,11 +21,11 @@ RUN wget -q https://dl.influxdata.com/telegraf/releases/telegraf-${TELEGRAF_VERS
     cp -a /usr/src/telegraf*/* /usr/bin/ && \
     rm -rf *.tar.gz* /usr/src /root/.gnupg
 
-COPY start-input-snmp.sh /source/start-input-snmp.sh
-RUN chmod +x /source/start-input-snmp.sh
+COPY start-input-statsd.sh /source/start-input-statsd.sh
+RUN chmod +x /source/start-input-statsd.sh
 
 RUN mkdir /data
 ADD templates /data/templates/
 WORKDIR /data
 
-CMD ["/source/start-input-snmp.sh"]
+CMD ["/source/start-input-statsd.sh"]
