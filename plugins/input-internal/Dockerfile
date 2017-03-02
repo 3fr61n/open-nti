@@ -6,7 +6,7 @@ USER root
 ## To be removed once change merge upstream
 RUN apk add --no-cache ca-certificates && \
     update-ca-certificates
-RUN apk add --no-cache wget git
+RUN apk add --no-cache wget git bind-tools
 
 ARG TELEGRAF_VERSION=1.2.1
 
