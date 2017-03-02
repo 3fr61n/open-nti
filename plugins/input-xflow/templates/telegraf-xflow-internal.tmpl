@@ -1,0 +1,36 @@
+#[tags]
+#  dc = "open-nti"
+
+[agent]
+  interval = "1m"
+  round_interval = true
+  flush_interval = "30s"
+  flush_jitter = "0s"
+  debug = true
+  hostname = "input-xflow"
+
+[[outputs.influxdb]]
+  urls = ["http://opennti:8086"]
+  database = "xflow"
+  precision = "s"
+  retention_policy = ""
+  timeout = "5s"
+
+[[inputs.exec]]
+  name_override = "internal"
+  # Shell/commands array
+  commands = ["/bin/bash /data/templates/get_pmacct_bgp_rib_stats.sh"]
+
+  ## Timeout for each command to complete.
+  timeout = "1m"
+
+  # Data format to consume.
+  data_format = "json"
+  tag_keys = [
+    "snapshot",
+    "peer_ip_src", 
+    "event_type",
+    "dump_close",
+    "tables"
+  ]
+

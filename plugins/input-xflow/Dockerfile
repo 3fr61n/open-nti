@@ -30,7 +30,6 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN mkdir /data
 ADD templates /data/templates/
-RUN chmod +x /data/templates/start-input-xflow.sh
 WORKDIR /data
 
 CMD ["/usr/bin/supervisord"]

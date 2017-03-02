@@ -7,7 +7,7 @@
   flush_interval = "30s"
   flush_jitter = "0s"
   debug = true
-  hostname = ""
+  hostname = "input-xflow"
 
 [[outputs.influxdb]]
   urls = ["http://opennti:8086"]
@@ -60,4 +60,3 @@
     "tcp_flags",
     "ip_proto"
   ]
-
