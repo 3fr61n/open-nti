@@ -397,7 +397,7 @@ def parse_result(host,target_command,result,datapoints,latest_datapoints,kpi_tag
                                 if 'sub-matches' in keys_tmp.keys():
                                     del keys_tmp['sub-matches']
                                 for key_tmp in keys_tmp.keys():
-                                    keys[key_tmp]=node.xpath(keys_tmp[key_tmp])[0].text.replace(" ","_").strip()
+                                    keys[key_tmp]=node.xpath(keys_tmp[key_tmp])[0].text.strip().replace(" ","_")
                                 #print keys
                                 for sub_match in match["loop"]["sub-matches"]:
                                     try:
